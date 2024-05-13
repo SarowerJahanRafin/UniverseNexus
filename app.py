@@ -90,7 +90,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         f.write(b'</style>\n')
         f.write(b'</head>\n')
         #f.write(b'<div style=\"text-align: center;\">\n')
-        f.write(b'<img width=\"400\" src=\"https://images2.imgbox.com/46/aa/qG7wrGvc_o.png\">\n')
+        f.write(b'<img width=\"400\" src=\"https://madegrandbycam.com/wp-content/uploads/2023/09/NEXUS-UNIVERSE-FOR-WORDPRESS-MADEGRANDBYCAM-FEATURED-IMAGE-202309.jpg\">\n')
         f.write(b'<h1>Share files</h1>')
         #f.write(b'<\div>\n')
         f.write(b"<hr>\n")
@@ -104,17 +104,11 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         f.write(b"<input type=\"search\" id=\"search\" name=\"q\" placeholder=\"Search...\">\n")
         f.write(b"<button type=\"submit\">Go</button>\n")
         f.write(b"</form>\n")
-        #f.write(b'<img width=\"400\" src=\"https://www.hubspot.com/hubfs/image-hubspot-centering-css.jpeg\">\n')
-        # f.write(b"<html>\n<title>Directory listing for %s</title>\n" % display_path.encode('utf-8'))
-        # f.write(b"<body>\n<h2>Directory listing for %s</h2>\n" % display_path.encode('utf-8'))
-        # f.write(b"<hr>\n")
-        # f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\">")
-        # f.write(b"<input name=\"file\" type=\"file\"/>")
-        # f.write(b"<input type=\"submit\" value=\"upload\"/></form>\n")
+
         f.write(b"<hr>\n<ul>\n")
         new_list = []
         new_list_1 = []
-        # f.write(b"<h1>Directories</h1>\n")
+        
         for name in list_dir:
             fullname = os.path.join(path, name)
             size = os.stat(fullname).st_size
@@ -187,7 +181,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         f.write(b"<html>\n<title>Upload Result Page</title>\n")
         f.write(b"<body>\n")
         f.write(b"<div style=\"text-align: center;\">")
-        f.write(b'<img width=\"400\" src=\"https://images2.imgbox.com/46/aa/qG7wrGvc_o.png\">\n')
+        f.write(b'<img width=\"400\" src=\"https://madegrandbycam.com/wp-content/uploads/2023/09/NEXUS-UNIVERSE-FOR-WORDPRESS-MADEGRANDBYCAM-FEATURED-IMAGE-202309.jpg\">\n')
         f.write(b"</div>\n")
         f.write(b'<h1><center>Share files in your network</h1>\n')
         f.write(b"<h2><center>Upload Result Page</h2>\n")
@@ -314,7 +308,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         f.write(b'a:hover { text-decoration: underline; }\n')
         f.write(b'</style>\n')
         f.write(b'</head>\n')
-        f.write(b'<img width=\"400\" src=\"https://images2.imgbox.com/46/aa/qG7wrGvc_o.png\">\n')
+        f.write(b'<img width=\"400\" src=\"https://madegrandbycam.com/wp-content/uploads/2023/09/NEXUS-UNIVERSE-FOR-WORDPRESS-MADEGRANDBYCAM-FEATURED-IMAGE-202309.jpg\">\n')
         f.write(b'<h1>Share files</h1>\n')
         f.write(b"<hr>\n")
         f.write(b"<h1>Upload File</h1>\n")
@@ -327,12 +321,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         f.write(b"<input type=\"search\" id=\"search\" name=\"q\" placeholder=\"Search...\">\n")
         f.write(b"<button type=\"submit\">Go</button>\n")
         f.write(b"</form>\n")
-        # f.write(b"<html>\n<title>Directory listing for %s</title>\n" % display_path.encode('utf-8'))
-        # f.write(b"<body>\n<h2>Directory listing for %s</h2>\n" % display_path.encode('utf-8'))
-        # f.write(b"<hr>\n")
-        # f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\">")
-        # f.write(b"<input name=\"file\" type=\"file\"/>")
-        # f.write(b"<input type=\"submit\" value=\"upload\"/></form>\n")
+
         f.write(b"<hr>\n<ul>\n")
         new_list = []
         new_list_1 = []
