@@ -58,7 +58,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         query_params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
         search_query = query_params.get("q", [""])[0] 
 
-        
         try:
             path = path[:-7]
             print(path)
@@ -67,95 +66,50 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         except os.error:
             self.send_error(404, "No permission to list directory")
             return None
-        # list_dir.sort(key=lambda a: a.lower())
+
         f = BytesIO()
         display_path = escape(unquote(self.path))
-        f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write(b'<html>\n<head>\n')
+        f.write(b'<!DOCTYPE html>\n')
+        f.write(b'<html lang="en">\n<head>\n')
+        f.write(b'<meta charset="UTF-8">\n')
+        f.write(b'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n')
         f.write(b'<title>Directory listing for %s</title>\n' % display_path.encode('utf-8'))
         f.write(b'<style>\n')
-        f.write(b'body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #F2F2F2; }\n')
-        f.write(b'img { display: block; width: 60%; margin-left: auto; margin-right: auto;}\n')
-        f.write(b'.container { max-width: 800px; margin: 0 auto; padding: 20px; background-color: #FFF; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }\n')
-        f.write(b'h1 { text-align: center; margin-bottom: 20px; }\n')
-        f.write(b'form { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }\n')
-        f.write(b'input[type="file"] { margin-bottom: 10px; }\n')
-        f.write(b'input[type="submit"] { background-color: #13274D; color: #FFF; padding: 10px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.2s ease-in-out; }\n')
-        f.write(b'input[type="submit"]:hover { background-color: #3E8E41; }\n')
-        f.write(b'table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }\n')
-        f.write(b'th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }\n')
-        f.write(b'th { background-color: #13274D; color: #FFF; }\n')
-        f.write(b'a { color: #000; text-decoration: none; }\n')
+        f.write(b'body { font-family: "Segoe UI", Arial, sans-serif; background-color: #f0f0f0; color: #333; margin: 0; padding: 20px; }\n')
+        f.write(b'.container { max-width: 960px; margin: auto; background-color: #fff; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; }\n')
+        f.write(b'h1, h2 { color: #0056b3; text-align: center; }\n')
+        f.write(b'a { color: #0066cc; text-decoration: none; }\n')
         f.write(b'a:hover { text-decoration: underline; }\n')
+        f.write(b'table { width: 100%; border-collapse: collapse; margin-top: 20px; }\n')
+        f.write(b'th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }\n')
+        f.write(b'th { background-color: #f8f8f8; }\n')
+        f.write(b'input[type="search"], button { padding: 10px; margin-top: 10px; }\n')
+        f.write(b'button { background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }\n')
+        f.write(b'button:hover { background-color: #45a049; }\n')
+        f.write(b'.back-button { padding: 8px 16px; background-color: #ccc; color: black; text-decoration: none; border-radius: 4px; }\n')
+        f.write(b'.back-button:hover { background-color: #bbb; }\n')
         f.write(b'</style>\n')
-        f.write(b'</head>\n')
-        #f.write(b'<div style=\"text-align: center;\">\n')
-        f.write(b'<img width=\"400\" src=\"https://madegrandbycam.com/wp-content/uploads/2023/09/NEXUS-UNIVERSE-FOR-WORDPRESS-MADEGRANDBYCAM-FEATURED-IMAGE-202309.jpg\">\n')
-        f.write(b'<h1>Share files</h1>')
-        #f.write(b'<\div>\n')
-        f.write(b"<hr>\n")
-        f.write(b"<h1>Upload File</h1>\n")
-        f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\" style=\"margin-bottom: 1em;\">\n")
-        f.write(b"<input name=\"file\" type=\"file\" style=\"margin-right: 0.5em;\" />\n")
-        f.write(b"<input type=\"submit\" value=\"Upload File\" class=\"btn btn-primary\" />\n")
-        f.write(b"</form>\n")
+        f.write(b'</head>\n<body>\n')
+        f.write(b'<div class="container">\n')
+        f.write(b'<h1>Directory Listing</h1>\n')
+        f.write(b'<a href="/" class="back-button">Back to Main Directory</a>\n')
+        f.write(b'<h2>%s</h2>\n' % display_path.encode('utf-8'))
         f.write(b"<form action=\"/search\" method=\"get\">\n")
-        f.write(b"<label for=\"search\">Search:</label>\n")
-        f.write(b"<input type=\"search\" id=\"search\" name=\"q\" placeholder=\"Search...\">\n")
-        f.write(b"<button type=\"submit\">Go</button>\n")
+        f.write(b"<input type=\"search\" id=\"search\" name=\"q\" placeholder=\"Search files...\">\n")
+        f.write(b"<button type=\"submit\">Search</button>\n")
         f.write(b"</form>\n")
-
-        f.write(b"<hr>\n<ul>\n")
-        new_list = []
-        new_list_1 = []
-        
+        f.write(b"<table>\n")
+        f.write(b"<tr><th>Name</th><th>Size</th><th>Last Modified</th></tr>\n")
         for name in list_dir:
             fullname = os.path.join(path, name)
             size = os.stat(fullname).st_size
             modified_time = os.stat(fullname).st_mtime
-            display_name = linkname = name
-            # Append / for directories or @ for symbolic links
-            wat = False
-            if os.path.isdir(fullname):
-                display_name = name + "/"
-                linkname = name + "/"
-                wat = True
-            if os.path.islink(fullname):
-                display_name = name + "@"
-                wat = True
-                # Note: a link to a directory displays with @ and links with /
-            if wat:
-                # f.write(b'<li><a href="%s">%s</a>\n' % (quote(linkname).encode('utf-8'), escape(display_name).encode('utf-8')))
-                new_list_1.append((linkname, display_name, size, modified_time))
-            else:
-                new_list.append((linkname, display_name, size, modified_time))
-        # f.write(b"<h1>Files</h1>\n")
-        # for linkname, display_name in new_list:
-        #     f.write(b'<li><a href="%s">%s</a>\n' % (quote(linkname).encode('utf-8'), escape(display_name).encode('utf-8')))
-        f.write(b'<hr>\n<h2>Directories:</h2>\n')
-        f.write(b'<table style="width:100%" align="center">\n')
-        f.write(b'<tr>\n<th>Name</th>\n<th>Size</th>\n<th>Last Modified</th>\n</tr>\n')
-        for linkname, display_name, size, modified_time in new_list_1:
-            print(linkname, display_name, size, modified_time)
-            f.write(b'<tr>\n')
-            f.write(b'<td><a href="%s">%s</a></td>\n' % (quote(linkname).encode('utf-8'), escape(display_name).encode('utf-8')))
-            f.write(b'<td>%s</td>\n' % format_size(size).encode('utf-8'))
-            f.write(b'<td>%s</td>\n' % format_date(modified_time).encode('utf-8'))
-            f.write(b'</tr>\n')
-        f.write(b'</table>\n')
-        f.write(b'<hr>\n<h2>Files:</h2>\n')
-        f.write(b'<table style="width:100%" align="center">\n')
-        f.write(b'<tr>\n<th>Name</th>\n<th>Size</th>\n<th>Last Modified</th>\n</tr>\n')
-        for linkname, display_name, size, modified_time in new_list:
-            print(linkname, display_name, size, modified_time)
-            f.write(b'<tr>\n')
-            f.write(b'<td><a href="%s">%s</a></td>\n' % (quote(linkname).encode('utf-8'), escape(display_name).encode('utf-8')))
-            f.write(b'<td>%s</td>\n' % format_size(size).encode('utf-8'))
-            f.write(b'<td>%s</td>\n' % format_date(modified_time).encode('utf-8'))
-            f.write(b'</tr>\n')
-        f.write(b'</table>\n')
-
-        f.write(b"</ul>\n<hr>\n</body>\n</html>\n")
+            display_name = name + ("/" if os.path.isdir(fullname) else "")
+            f.write(b'<tr><td><a href="%s">%s</a></td><td>%s</td><td>%s</td></tr>\n' %
+                    (quote(display_name).encode('utf-8'), escape(display_name).encode('utf-8'),
+                    format_size(size).encode('utf-8'), format_date(modified_time).encode('utf-8')))
+        f.write(b"</table>\n")
+        f.write(b'</div>\n</body>\n</html>\n')
         length = f.tell()
         f.seek(0)
         self.send_response(200)
@@ -163,8 +117,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(length))
         self.end_headers()
         return f
+    
 
-        
 
     def do_HEAD(self):
 
@@ -278,6 +232,9 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         return f
 
+
+
+# this is the fornt directory 
     def list_directory(self, path):
         print(path)
        
@@ -289,38 +246,44 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         # list_dir.sort(key=lambda a: a.lower())
         f = BytesIO()
         display_path = escape(unquote(self.path))
-        f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write(b'<html>\n<head>\n')
+        f.write(b'<!DOCTYPE html>\n')
+        f.write(b'<html lang="en">\n<head>\n')
+        f.write(b'<meta charset="UTF-8">\n')
+        f.write(b'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n')
         f.write(b'<title>Directory listing for %s</title>\n' % display_path.encode('utf-8'))
         f.write(b'<style>\n')
-        f.write(b'body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #F2F2F2; }\n')
-        f.write(b'.container { max-width: 800px; margin: 0 auto; padding: 20px; background-color: #FFF; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }\n')
-        f.write(b'img { display: block; width: 60%; margin-left: auto; margin-right: auto;}\n')
-        f.write(b'h1 { text-align: center; margin-bottom: 20px; }\n')
-        f.write(b'form { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }\n')
-        f.write(b'input[type="file"] { margin-bottom: 10px; }\n')
-        f.write(b'input[type="submit"] { background-color: #13274D; color: #FFF; padding: 10px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.2s ease-in-out; }\n')
-        f.write(b'input[type="submit"]:hover { background-color: #3E8E41; }\n')
-        f.write(b'table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }\n')
-        f.write(b'th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }\n')
-        f.write(b'th { background-color: #13274D; color: #FFF; }\n')
-        f.write(b'a { color: #000; text-decoration: none; }\n')
+        f.write(b'body { font-family: "Segoe UI", Arial, sans-serif; margin: 0; background-color: #F7F7F7; color: #333; }\n')
+        f.write(b'.container { max-width: 800px; margin: 20px auto; padding: 20px; background-color: #FFF; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px; }\n')
+        f.write(b'img { display: block; max-width: 100%; height: auto; margin: 0 auto 20px; }\n')
+        f.write(b'h1, h2 { text-align: center; color: #0056b3; }\n')  # Ensure h2 is also centered
+        f.write(b'hr { border: 0; height: 1px; background: #ccc; margin: 20px 0; }\n')
+        f.write(b'form { display: flex; flex-direction: column; align-items: center; gap: 10px; }\n')
+        f.write(b'input, button { padding: 10px; width: 95%; max-width: 300px; border-radius: 5px; border: 1px solid #ccc; }\n')
+        f.write(b'button { background-color: #0056b3; color: white; cursor: pointer; border: none; }\n')
+        f.write(b'button:hover { background-color: #004494; }\n')
+        f.write(b'table { width: 100%; border-collapse: collapse; }\n')
+        f.write(b'th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }\n')
+        f.write(b'th { background-color: #0056b3; color: #fff; }\n')
+        f.write(b'a { color: #0056b3; text-decoration: none; }\n')
         f.write(b'a:hover { text-decoration: underline; }\n')
         f.write(b'</style>\n')
-        f.write(b'</head>\n')
-        f.write(b'<img width=\"400\" src=\"https://madegrandbycam.com/wp-content/uploads/2023/09/NEXUS-UNIVERSE-FOR-WORDPRESS-MADEGRANDBYCAM-FEATURED-IMAGE-202309.jpg\">\n')
+        f.write(b'</head>\n<body>\n')
+        f.write(b'<div class="container">\n')
+        f.write(b'<img src="https://madegrandbycam.com/wp-content/uploads/2023/09/NEXUS-UNIVERSE-FOR-WORDPRESS-MADEGRANDBYCAM-FEATURED-IMAGE-202309.jpg" alt="Banner Image">\n')
         f.write(b'<h1>Share files</h1>\n')
         f.write(b"<hr>\n")
-        f.write(b"<h1>Upload File</h1>\n")
-        f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\" style=\"margin-bottom: 1em;\">\n")
-        f.write(b"<input name=\"file\" type=\"file\" style=\"margin-right: 0.5em;\" />\n")
-        f.write(b"<input type=\"submit\" value=\"Upload File\" class=\"btn btn-primary\" />\n")
+        f.write(b"<h2>Upload File</h2>\n")
+        f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\">\n")
+        f.write(b"<input name=\"file\" type=\"file\" />\n")
+        f.write(b"<button type=\"submit\">Upload File</button>\n")
         f.write(b"</form>\n")
+        f.write(b"<h2>Search Files</h2>\n")
         f.write(b"<form action=\"/search\" method=\"get\">\n")
-        f.write(b"<label for=\"search\">Search:</label>\n")
-        f.write(b"<input type=\"search\" id=\"search\" name=\"q\" placeholder=\"Search...\">\n")
+        f.write(b"<input type=\"search\" id=\"search\" name=\"q\" placeholder=\"Search files...\">\n")
         f.write(b"<button type=\"submit\">Go</button>\n")
         f.write(b"</form>\n")
+        f.write(b'</div>\n</body>\n</html>\n')
+
 
         f.write(b"<hr>\n<ul>\n")
         new_list = []
